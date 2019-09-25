@@ -10,6 +10,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -51,7 +52,7 @@ class TaskListController extends AbstractController
     /**
      * @Route("/", name="create", methods={"POST"})
      */
-    public function create(ManagerRegistry $managerRegistry, Request $request)
+    public function create(ManagerRegistry $managerRegistry, ?CacheItemPoolInterface $resultCache, Request $request)
     {
         $entityManager = $managerRegistry->getManagerForClass(TaskList::class);
         $list = new TaskList($this->getUser(), $request->request->get('name'));
@@ -59,6 +60,18 @@ class TaskListController extends AbstractController
         $entityManager->persist($list);
         $entityManager->flush();
         $entityManager->clear();
+
+        if ($resultCache) {
+            $resultCache->deleteItems(
+                [
+                    'frontpage_summarized',
+                    'frontpage_owned',
+                    'frontpage_contributed',
+                    'frontpage_active',
+                    'frontpage_archived',
+                ]
+            );
+        }
 
         return $this->redirectToRoute('tasklist_list');
     }

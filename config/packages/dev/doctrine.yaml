@@ -1,0 +1,18 @@
+doctrine:
+    orm:
+        result_cache_driver:
+            type: service
+            id: doctrine.result_cache_provider
+
+services:
+    doctrine.result_cache_provider:
+        class: Symfony\Component\Cache\DoctrineProvider
+        public: false
+        arguments:
+            - '@doctrine.result_cache_pool'
+
+framework:
+    cache:
+        pools:
+            doctrine.result_cache_pool:
+                adapter: cache.app

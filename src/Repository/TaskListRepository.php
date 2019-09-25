@@ -35,6 +35,7 @@ DQL;
 
         return $this->getEntityManager()
             ->createQuery($dql)
+            ->useResultCache(true, 3600, 'frontpage_summarized')
             ->setParameter('owner', $user)
             ->getResult();
     }
@@ -49,6 +50,7 @@ DQL;
 
         return $this->getEntityManager()
             ->createQuery($dql)
+            ->useResultCache(true, 3600, 'frontpage_owned')
             ->setParameter('owner', $owner)
             ->getResult();
     }
@@ -62,6 +64,7 @@ DQL;
             ->where('contributors = :contributor')
             ->setParameter('contributor', $user)
             ->getQuery()
+            ->useResultCache(true, 3600, 'frontpage_contributed')
             ->getResult();
     }
 
@@ -72,6 +75,7 @@ DQL;
             ->andWhere('task_list.owner = :owner')
             ->setParameter('owner', $owner)
             ->getQuery()
+            ->useResultCache(true, 3600, 'frontpage_active')
             ->getResult();
     }
 
@@ -81,6 +85,7 @@ DQL;
             ->where('task_list.archived = true AND task_list.owner = :owner')
             ->setParameter('owner', $owner)
             ->getQuery()
+            ->useResultCache(true, 3600, 'frontpage_archived')
             ->getResult();
     }
 }
