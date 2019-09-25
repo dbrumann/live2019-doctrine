@@ -8,7 +8,7 @@
             <p>created by <strong>{{ task_list.owner }}</strong> with contributions from: {{ task_list.contributors|map(contributor => contributor.name)|join(', ') }}</p>
             <div class="d-flex justify-content-between align-items-baseline">
                 {% if task_list.archived == false %}
-                <form action="#" method="post">
+                <form action="{{ path('tasklist_archive', {id: task_list.id, version: task_list.version}) }}" method="post">
                     <div class="btn-group btn-group-sm mb-3 align-bottom">
                         <a href="{{ path('tasklist_contributors', {id: task_list.id}) }}" class="btn btn-outline-primary">Add Contributor</a>
                         <button type="submit" class="btn btn-outline-secondary">Archive list</button>

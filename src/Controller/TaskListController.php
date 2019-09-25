@@ -7,6 +7,9 @@ use App\Entity\TaskList;
 use App\Form\ContributorType;
 use App\Repository\TaskListRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -77,6 +80,34 @@ class TaskListController extends AbstractController
         $entityManager->clear();
 
         return $this->redirectToRoute('tasklist_show', ['id' => $taskItem->getList()->getId()]);
+    }
+
+    /**
+     * @Route("/archive/{id}/{version}", name="archive", methods={"POST"})
+     */
+    public function archive(ManagerRegistry $managerRegistry, $id, $version, Request $request)
+    {
+        /** @var EntityManager $entityManager */
+        $entityManager = $managerRegistry->getManagerForClass(TaskList::class);
+
+        try {
+            $taskList = $entityManager->find(TaskList::class, $id, LockMode::OPTIMISTIC, $version);
+
+            $taskList->archive();
+
+            $entityManager->flush();
+            $entityManager->clear();
+        } catch (OptimisticLockException $optimisticLockException) {
+            $this->addFlash('error',
+                'Could not update list! ' .
+                'Probably someone has changed it during your request. ' .
+                'Please check the current version and retry'
+            );
+
+            return $this->redirectToRoute('tasklist_show', ['id' => $id]);
+        }
+
+        return $this->redirectToRoute('tasklist_show', ['id' => $taskList->getId()]);
     }
 
     /**

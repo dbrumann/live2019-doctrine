@@ -20,6 +20,12 @@ class TaskList
     private $id;
 
     /**
+     * @ORM\Version
+     * @ORM\Column(type="integer", options={"unsigned": true})
+     */
+    private $version;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -85,6 +91,11 @@ class TaskList
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 
     public function getOwner(): User
