@@ -35,7 +35,9 @@ class TaskListController extends AbstractController
                 $taskLists = $taskListRepository->findArchived($this->getUser());
                 break;
             default:
-                $taskLists = $taskListRepository->findAllFor($this->getUser());
+                return $this->render('tasks/index_summarized.html.twig', [
+                    'lists' => $taskListRepository->findSummarizedTaskListFor($this->getUser()),
+                ]);
         }
 
         return $this->render('tasks/index.html.twig', [

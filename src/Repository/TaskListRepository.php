@@ -18,22 +18,24 @@ class TaskListRepository extends ServiceEntityRepository
         parent::__construct($registry, TaskList::class);
     }
 
-    public function findAllFor(User $user)
+    public function findSummarizedTaskListFor(User $user)
     {
-        $sql = <<<SQL
-SELECT list.*
-FROM app_task_list AS list
-LEFT JOIN task_list_user AS contributor ON list.id = contributor.task_list_id
-WHERE list.owner_id = :user OR contributor.user_id = :user
-SQL;
+        $dql = <<<DQL
+SELECT NEW App\TaskList\SummarizedTaskList(
+    list.id,
+    list.name,
+    list.archived,
+    list.created,
+    list.lastUpdated,
+    SIZE(list.items)
+)
+FROM App\Entity\TaskList list
+WHERE list.owner = :owner
+DQL;
 
-        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata(TaskList::class, 'list');
-
-        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-
-        return $query
-            ->setParameter('user', $user)
+        return $this->getEntityManager()
+            ->createQuery($dql)
+            ->setParameter('owner', $user)
             ->getResult();
     }
 
