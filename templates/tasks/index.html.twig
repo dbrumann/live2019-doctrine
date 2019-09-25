@@ -13,11 +13,11 @@
         </div>
     </form>
     <ul class="nav nav-tabs">
-        <li class="nav-item"><a class="nav-link active bg-light" href="{{ path('tasklist_list') }}">All Lists</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">My Lists</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Contributing Lists</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Active Lists</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Archived Lists</a></li>
+        <li class="nav-item"><a class="nav-link{% if app.request.query.get('filter') is null %} active bg-light{% endif %}" href="{{ path('tasklist_list') }}">All Lists</a></li>
+        <li class="nav-item"><a class="nav-link{% if app.request.query.get('filter') == 'own' %} active bg-light{% endif %}" href="{{ path('tasklist_list', {filter: 'own'}) }}">My Lists</a></li>
+        <li class="nav-item"><a class="nav-link{% if app.request.query.get('filter') == 'contributing' %} active bg-light{% endif %}" href="{{ path('tasklist_list', {filter: 'contributing'}) }}">Contributing Lists</a></li>
+        <li class="nav-item"><a class="nav-link{% if app.request.query.get('filter') == 'active' %} active bg-light{% endif %}" href="{{ path('tasklist_list', {filter: 'active'}) }}">Active Lists</a></li>
+        <li class="nav-item"><a class="nav-link{% if app.request.query.get('filter') == 'archived' %} active bg-light{% endif %}" href="{{ path('tasklist_list', {filter: 'archived'}) }}">Archived Lists</a></li>
     </ul>
 
     <div class="mt-4 mb-5">

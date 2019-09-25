@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\TaskItem;
 use App\Entity\TaskList;
 use App\Form\ContributorType;
+use App\Repository\TaskListRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,13 +19,27 @@ class TaskListController extends AbstractController
     /**
      * @Route("/", name="list", methods={"GET"})
      */
-    public function index(ManagerRegistry $managerRegistry, Request $request)
+    public function index(TaskListRepository $taskListRepository, Request $request)
     {
-        $entityManager = $managerRegistry->getManagerForClass(TaskList::class);
-        $repository = $entityManager->getRepository(TaskList::class);
+        switch ($request->query->get('filter')) {
+            case 'own':
+                $taskLists = $taskListRepository->findListsOwnedBy($this->getUser());
+                break;
+            case 'contributing':
+                $taskLists = $taskListRepository->findListsContributedBy($this->getUser());
+                break;
+            case 'active':
+                $taskLists = $taskListRepository->findActive($this->getUser());
+                break;
+            case 'archived':
+                $taskLists = $taskListRepository->findArchived($this->getUser());
+                break;
+            default:
+                $taskLists = $taskListRepository->findAllFor($this->getUser());
+        }
 
         return $this->render('tasks/index.html.twig', [
-            'task_lists' => $repository->findAll(),
+            'task_lists' => $taskLists,
         ]);
     }
 
