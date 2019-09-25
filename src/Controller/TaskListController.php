@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\TaskItem;
 use App\Entity\TaskList;
 use App\Form\ContributorType;
+use App\Repository\TaskItemRepository;
 use App\Repository\TaskListRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\LockMode;
@@ -74,6 +75,18 @@ class TaskListController extends AbstractController
         }
 
         return $this->redirectToRoute('tasklist_list');
+    }
+
+    /**
+     * @Route("/new", name="new", methods={"GET"})
+     */
+    public function showNewTasks(TaskItemRepository $taskItemRepository)
+    {
+        $tasks = $taskItemRepository->findTasksCreatedToday();
+
+        return $this->render('tasks/recent.html.twig', [
+            'tasks' => $tasks,
+        ]);
     }
 
     /**

@@ -8,7 +8,7 @@ use Doctrine\Common\PropertyChangedListener;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\TaskItemRepository")
  * @ORM\ChangeTrackingPolicy("NOTIFY")
  * @ORM\Table(name="app_task_item")
  */
