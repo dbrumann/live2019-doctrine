@@ -21,7 +21,7 @@ Installation (development)
 1. Clone repository
 
     ```bash
-    git clone https://github.com/dbrumann/todo-app.git
+    git clone https://github.com/dbrumann/live2019-doctrine.git
     ```
 
 1. Install dependencies
@@ -45,12 +45,10 @@ Installation (development)
 1. Start local web server
 
     ```bash
-    symfony local:proxy:start
-    symfony local:proxy:domain:attach todo-app
     symfony local:server:start --daemon
     ```
 
-1. Open app in browser: [todo-app.wip](http://todo-app.wip)
+1. Open app in browser: localhost:8000
 
 Known issues
 ------------
