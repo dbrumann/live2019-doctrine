@@ -3,14 +3,19 @@
 namespace App\Entity;
 
 use DateTimeImmutable;
+use Doctrine\Common\NotifyPropertyChanged;
+use Doctrine\Common\PropertyChangedListener;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ * @ORM\ChangeTrackingPolicy("NOTIFY")
  * @ORM\Table(name="app_task_item")
  */
-class TaskItem
+class TaskItem implements NotifyPropertyChanged
 {
+    private $listeners = [];
+
     /**
      * @ORM\Id
      * @ORM\Column(type="bigint", options={"unsigned": true})
@@ -56,6 +61,7 @@ class TaskItem
             throw new \RuntimeException('Task is already open.');
         }
 
+        //$this->notifyListeners('done', true, false);
         $this->done = false;
     }
 
@@ -65,6 +71,7 @@ class TaskItem
             throw new \RuntimeException('Task is already done.');
         }
 
+        $this->notifyListeners('done', false, true);
         $this->done = true;
     }
 
@@ -91,5 +98,17 @@ class TaskItem
     public function getCreatedOn(): DateTimeImmutable
     {
         return $this->created;
+    }
+
+    private function notifyListeners(string $propertyName, $oldValue, $newValue): void
+    {
+        foreach ($this->listeners as $listener) {
+            $listener->propertyChanged($this, $propertyName, $oldValue, $newValue);
+        }
+    }
+
+    public function addPropertyChangedListener(PropertyChangedListener $listener): void
+    {
+        $this->listeners[] = $listener;
     }
 }
