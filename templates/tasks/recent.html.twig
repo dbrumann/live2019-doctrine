@@ -1,0 +1,19 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+
+    <div class="list-group">
+        {% for task in tasks %}
+            <div class="list-group-item{% if task.done %} bg-light text-muted{% endif %}">
+                <div class="d-flex justify-content-start align-items-baseline">
+                    <form action="{{ path('tasklist_item_update', {'id': task.id}) }}" method="post" class="mr-3">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn {{ task.done ? 'btn-outline-secondary' : 'btn-primary' }}">{{ task.done ? 'reopen' : 'close' }}</button>
+                        </div>
+                    </form>
+                    <strong>{{ task.summary|title }}</strong>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+
+    <div class="{{ task_list.archived ? 'bg-dark text-muted' : 'bg-white' }} rounded shadow-sm pt-2 mb-3">
+        <div class="container">
+            <h1>{% if task_list.archived %}<span class="badge badge-secondary">archived</span>{% endif %} {{ task_list.name|title }}</h1>
+            <p>created by <strong>{{ task_list.owner }}</strong> with contributions from: {{ task_list.contributors|map(contributor => contributor.name)|join(', ') }}</p>
+            <div class="d-flex justify-content-between align-items-baseline">
+                {% if task_list.archived == false %}
+                <form action="#" method="post">
+                    <div class="btn-group btn-group-sm mb-3 align-bottom">
+                        <a href="{{ path('tasklist_contributors', {id: task_list.id}) }}" class="btn btn-outline-primary">Add Contributor</a>
+                        <button type="submit" class="btn btn-outline-secondary">Archive list</button>
+                    </div>
+                </form>
+                {% endif %}
+                <p><small class="text-muted">created on {{ task_list.createdOn|date('d.m.Y H:i') }}</small></p>
+            </div>
+        </div>
+    </div>
+
+    <form action="{{ path('tasklist_add', {id: task_list.id}) }}" method="post" class="mb-4">
+        <div class="row">
+            <div class="col-lg-10 col-md-8">
+                <label for="task_summary" class="sr-only">List name</label>
+                <input id="task_summary" type="text" class="form-control form-control-lg" name="summary" placeholder="Enter your task summary">
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <button class="btn btn-outline-primary btn-lg btn-block" type="submit">Add task</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="list-group">
+        {% for task in task_list.items %}
+            <div class="list-group-item{% if task.done %} bg-light text-muted{% endif %}">
+                <div class="d-flex justify-content-start align-items-baseline">
+                    <form action="{{ path('tasklist_item_update', {'id': task.id}) }}" method="post" class="mr-3">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn {{ task.done ? 'btn-outline-secondary' : 'btn-primary' }}">{{ task.done ? 'reopen' : 'close' }}</button>
+                        </div>
+                    </form>
+                    <strong>{{ task.summary|title }}</strong>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

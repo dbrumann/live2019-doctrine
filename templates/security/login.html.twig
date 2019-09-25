@@ -1,0 +1,29 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <h1>Please log in</h1>
+
+    {% if error %}
+        <div class="alert alert-danger">
+            <strong>Login failed</strong> {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+    {% endif %}
+
+    <form action="{{ path('login') }}" method="post" class="mt-4">
+        <div class="mb-3">
+            <label for="username">Email:</label>
+            <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="_password" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-success">Login</button>&emsp;
+            <span class="text-muted">No account yet? <a href="{{ path('register') }}">You can register with an invite code.</a></span>
+        </div>
+    </form>
+
+{% endblock %}

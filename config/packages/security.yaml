@@ -1,0 +1,26 @@
+security:
+    encoders:
+        App\Entity\User:
+            algorithm: 'auto'
+
+    providers:
+        doctrine:
+            entity:
+                class: 'App\Entity\User'
+                property: 'email'
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: true
+            provider: doctrine
+            form_login:
+                login_path: login
+                check_path: login
+            logout: ~
+
+    access_control:
+        - { path: ^/(login|register)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: ROLE_USER }
